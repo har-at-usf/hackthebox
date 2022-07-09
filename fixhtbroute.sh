@@ -26,17 +26,17 @@ fi
 exists=$(route | grep $1 | grep $device)
 
 # IP validation. If the user specified the device, make sure it exists.
-if [[ $1 =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ && $exists ]]; then
+if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ && $exists ]]; then
 	
 	sudo route del \
 		-net \
-		default gw "$1" \
+		default gw $ip \
 		netmask 0.0.0.0 \
 		dev $device
 		
 	# Notify the user on success.
-	echo -e "\nRemoved gateway [ $ip : $device ]\n"
-	route | grep $ip | grep $device
+	echo -e "\nRemoved gateway [ $ip : $device ]\n\n.Default routes:"
+	route | grep "default"
 
 # If an error occurs, choose the IP and device from the list of default gateways.
 else
@@ -46,4 +46,5 @@ else
 
 	echo -e "\nUsage: fixhtbroute.sh [htb gateway] [vpn device]"
 	echo -e "\nExample: ./fixhtbroute.sh 10.10.11.166 tun0\n"
+	
 fi
